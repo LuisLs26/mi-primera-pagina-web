@@ -3,141 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Luis</title>
+<title>Ruleta de Luis</title>
 
 <style>
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #1e1e2f;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-/* CONTENEDOR */
-.calculadora {
-    width: 300px;
-    background: #2c2c3e;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-/* TITULO */
-h1 {
+    font-family: Arial;
+    background: #121212;
     color: white;
     text-align: center;
-    font-size: 20px;
-    margin-bottom: 10px;
 }
 
-/* PANTALLA */
-.pantalla {
-    width: 100%;
-    height: 60px;
-    background: black;
-    color: #00ffcc;
-    font-size: 24px;
-    text-align: right;
-    padding: 10px;
+/* TÍTULO */
+h1 {
+    margin-top: 20px;
+}
+
+/* INPUT */
+textarea {
+    width: 90%;
+    height: 80px;
     border-radius: 10px;
-    margin-bottom: 15px;
-    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px 0;
 }
 
 /* BOTONES */
-.botones {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
 button {
-    padding: 15px;
-    font-size: 18px;
+    padding: 10px 20px;
+    margin: 5px;
     border: none;
     border-radius: 10px;
-    background: #444;
+    background: #00c853;
     color: white;
+    font-size: 16px;
     cursor: pointer;
 }
 
-button:hover {
-    background: #666;
+/* RULETA */
+.ruleta-container {
+    position: relative;
+    margin: 20px auto;
+    width: 300px;
+    height: 300px;
 }
 
-/* BOTONES ESPECIALES */
-.operador {
-    background: #ff9500;
+.ruleta {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 5px solid white;
+    position: relative;
+    transition: transform 4s ease-out;
 }
 
-.igual {
-    background: #00c853;
-    grid-column: span 2;
-}
-
-.clear {
-    background: #ff3b30;
+/* FLECHA */
+.flecha {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 30px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="calculadora">
-    <h1>Calculadora de Luis</h1>
+<h1>🎡 Ruleta de Luis</h1>
 
-    <input type="text" id="pantalla" class="pantalla" disabled>
+<textarea id="nombres" placeholder="Escribe nombres separados por coma:
+Luis, Ana, Pedro"></textarea><br>
 
-    <div class="botones">
-        <button class="clear" onclick="limpiar()">C</button>
-        <button onclick="borrar()">⌫</button>
-        <button class="operador" onclick="agregar('/')">÷</button>
-        <button class="operador" onclick="agregar('*')">×</button>
+<button onclick="crearRuleta()">Cargar nombres</button>
+<button onclick="girar()">Girar</button>
 
-        <button onclick="agregar('7')">7</button>
-        <button onclick="agregar('8')">8</button>
-        <button onclick="agregar('9')">9</button>
-        <button class="operador" onclick="agregar('-')">−</button>
-
-        <button onclick="agregar('4')">4</button>
-        <button onclick="agregar('5')">5</button>
-        <button onclick="agregar('6')">6</button>
-        <button class="operador" onclick="agregar('+')">+</button>
-
-        <button onclick="agregar('1')">1</button>
-        <button onclick="agregar('2')">2</button>
-        <button onclick="agregar('3')">3</button>
-
-        <button onclick="agregar('0')">0</button>
-        <button onclick="agregar('.')">.</button>
-        <button class="igual" onclick="calcular()">=</button>
-    </div>
+<div class="ruleta-container">
+    <div class="flecha">⬇️</div>
+    <canvas id="canvas" width="300" height="300"></canvas>
 </div>
 
+<h2 id="resultado"></h2>
+
 <script>
-function agregar(valor) {
-    document.getElementById("pantalla").value += valor;
+let opciones = [];
+let anguloActual = 0;
+
+function crearRuleta() {
+    let input = document.getElementById("nombres").value;
+    opciones = input.split(",").map(x => x.trim()).filter(x => x !== "");
+    dibujarRuleta();
 }
 
-function limpiar() {
-    document.getElementById("pantalla").value = "";
-}
+function dibujarRuleta() {
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let total = opciones.length;
 
-function borrar() {
-    let pantalla = document.getElementById("pantalla");
-    pantalla.value = pantalla.value.slice(0, -1);
-}
+    let angulo = (2 * Math.PI) / total;
 
-function calcular() {
-    try {
-        let resultado = eval(document.getElementById("pantalla").value);
-        document.getElementById("pantalla").value = resultado;
-    } catch {
-        alert("Error");
+    for (let i = 0; i < total; i++) {
+        ctx.beginPath();
+        ctx.moveTo(150,150);
+        ctx.arc(150,150,150, i * angulo, (i + 1) * angulo);
+        ctx.fillStyle = i % 2 === 0 ? "#ff6384" : "#36a2eb";
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(150,150);
+        ctx.rotate(i * angulo + angulo/2);
+        ctx.fillStyle = "white";
+        ctx.font = "14px Arial";
+        ctx.fillText(opciones[i], 60, 5);
+        ctx.restore();
     }
+}
+
+function girar() {
+    if (opciones.length === 0) return alert("Ingresa nombres");
+
+    let giro = Math.random() * 360 + 720; // mínimo 2 vueltas
+    anguloActual += giro;
+
+    document.getElementById("canvas").style.transform =
+        "rotate(" + anguloActual + "deg)";
+
+    setTimeout(() => {
+        let total = opciones.length;
+        let grados = anguloActual % 360;
+        let anguloPorOpcion = 360 / total;
+
+        let index = Math.floor((360 - grados) / anguloPorOpcion) % total;
+
+        document.getElementById("resultado").innerText =
+            "Ganador: " + opciones[index];
+    }, 4000);
 }
 </script>
 
