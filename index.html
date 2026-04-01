@@ -115,35 +115,39 @@ function borrar() {
     pantalla.value = pantalla.value.slice(0, -1);
 }
 
-/* 🔥 CALCULADORA TROLL NIVEL DIOS */
+/* 😈 CALCULADORA TROLL AJUSTADA */
 function calcular() {
     let pantalla = document.getElementById("pantalla");
 
     try {
         let correcto = eval(pantalla.value);
 
-        let modos = [
-            correcto + Math.floor(Math.random() * 50 - 25), // error random
-            "💀 ESTUDIA MÁS",
-            "🤯 ???",
-            "ERROR 404 😂",
-            "∞",
-            "NO SE 😈",
-            correcto * Math.random() * 10
-        ];
+        let probabilidad = Math.random();
 
-        let resultado = modos[Math.floor(Math.random() * modos.length)];
+        let resultado;
+
+        if (probabilidad < 0.8) {
+            // 🔢 80% números incorrectos
+            let error = Math.floor(Math.random() * 20 - 10);
+            resultado = correcto + error;
+        } else {
+            // 💀 20% mensajes troll
+            let mensajes = [
+                "💀 ESTUDIA MÁS",
+                "🤯 ???",
+                "NO SE 😈",
+                "ERROR 😂",
+                "∞"
+            ];
+            resultado = mensajes[Math.floor(Math.random() * mensajes.length)];
+        }
 
         pantalla.value = resultado;
 
-        /* 📳 Vibración (solo móvil) */
+        // 📳 Vibración (si es celular)
         if (navigator.vibrate) {
-            navigator.vibrate(200);
+            navigator.vibrate(100);
         }
-
-        /* 🔊 Sonido troll */
-        let audio = new Audio("https://www.myinstants.com/media/sounds/troll-laugh.mp3");
-        audio.play();
 
     } catch {
         pantalla.value = "💀 ERROR";
