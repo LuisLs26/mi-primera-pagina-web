@@ -49,16 +49,20 @@ button {
 
 canvas {
     border-radius: 50%;
-    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* FLECHA */
+/* FLECHA MEJORADA */
 .flecha {
     position: absolute;
-    top: -10px;
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 30px;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid red;
 }
 </style>
 </head>
@@ -68,13 +72,13 @@ canvas {
 <h1>🎡 Ruleta de Luis</h1>
 
 <textarea id="nombres" placeholder="Ejemplo:
-Luis, Ana, Pedro, Karol"></textarea><br>
+Luis, Carlos, Juan, Pedro"></textarea><br>
 
 <button onclick="crearRuleta()">Cargar nombres</button>
 <button onclick="girar()">Girar</button>
 
 <div class="ruleta-container">
-    <div class="flecha">⬇️</div>
+    <div class="flecha"></div>
     <canvas id="canvas" width="300" height="300"></canvas>
 </div>
 
@@ -109,9 +113,12 @@ function dibujarRuleta() {
         ctx.save();
         ctx.translate(150,150);
         ctx.rotate(i * angulo + angulo/2);
+
         ctx.fillStyle = "white";
-        ctx.font = "14px Arial";
-        ctx.fillText(opciones[i], 60, 5);
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(opciones[i], 80, 5);
+
         ctx.restore();
     }
 }
@@ -122,22 +129,26 @@ function girar() {
         return;
     }
 
+    let total = opciones.length;
+    let anguloPorOpcion = 360 / total;
+
+    // Elegir ganador primero (clave)
+    let ganadorIndex = Math.floor(Math.random() * total);
+
+    // Calcular giro exacto
+    let grados = 360 - (ganadorIndex * anguloPorOpcion) - (anguloPorOpcion / 2);
+
+    // Añadir vueltas extra
+    let giro = grados + (360 * 5);
+
+    anguloActual = giro;
+
     let canvas = document.getElementById("canvas");
-
-    let giro = Math.floor(Math.random() * 360) + 1080; // 3 vueltas mínimo
-    anguloActual += giro;
-
     canvas.style.transform = `rotate(${anguloActual}deg)`;
 
     setTimeout(() => {
-        let total = opciones.length;
-        let grados = anguloActual % 360;
-        let anguloPorOpcion = 360 / total;
-
-        let index = Math.floor((360 - grados) / anguloPorOpcion) % total;
-
         document.getElementById("resultado").innerText =
-            "🎉 Ganador: " + opciones[index];
+            "🎉 Ganador: " + opciones[ganadorIndex];
     }, 4000);
 }
 </script>
