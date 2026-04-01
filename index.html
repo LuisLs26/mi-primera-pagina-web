@@ -3,154 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ruleta de Luis</title>
+<title>FELIZ 1 DE ABRIL</title>
 
 <style>
 body {
     margin: 0;
-    font-family: Arial;
-    background: #121212;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff4e50, #fc913a);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* TEXTO */
+h1 {
+    font-size: 50px;
     color: white;
     text-align: center;
+    font-family: cursive;
+    text-shadow: 0 0 20px rgba(255,255,255,0.8);
+    animation: brillo 2s infinite alternate;
 }
 
-h1 {
-    margin-top: 20px;
+/* BRILLO */
+@keyframes brillo {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
 }
 
-/* INPUT */
-textarea {
-    width: 90%;
-    height: 80px;
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px 0;
+/* ELEMENTOS FLOTANTES */
+.particula {
+    position: fixed;
+    font-size: 25px;
+    animation: caer linear forwards;
 }
 
-/* BOTONES */
-button {
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 10px;
-    background: #00c853;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-/* RULETA */
-.ruleta-container {
-    position: relative;
-    margin: 20px auto;
-    width: 300px;
-    height: 300px;
-}
-
-canvas {
-    border-radius: 50%;
-    transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* FLECHA MEJORADA */
-.flecha {
-    position: absolute;
-    top: -5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 25px solid red;
+@keyframes caer {
+    0% {
+        transform: translateY(-50px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh);
+        opacity: 0;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎡 Ruleta de Luis</h1>
-
-<textarea id="nombres" placeholder="Ejemplo:
-Luis, Carlos, Juan, Pedro"></textarea><br>
-
-<button onclick="crearRuleta()">Cargar nombres</button>
-<button onclick="girar()">Girar</button>
-
-<div class="ruleta-container">
-    <div class="flecha"></div>
-    <canvas id="canvas" width="300" height="300"></canvas>
-</div>
-
-<h2 id="resultado"></h2>
+<h1>🎉 FELIZ 1 DE ABRIL 🎉</h1>
 
 <script>
-let opciones = [];
-let anguloActual = 0;
+function crearEfecto() {
+    const emojis = ["🎉","🎊","💖","❤️","✨"];
 
-function crearRuleta() {
-    let input = document.getElementById("nombres").value;
-    opciones = input.split(",").map(x => x.trim()).filter(x => x !== "");
-    dibujarRuleta();
-}
+    for (let i = 0; i < 30; i++) {
+        let elem = document.createElement("div");
+        elem.classList.add("particula");
+        elem.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
 
-function dibujarRuleta() {
-    let canvas = document.getElementById("canvas");
-    let ctx = canvas.getContext("2d");
+        elem.style.left = Math.random() * window.innerWidth + "px";
+        elem.style.animationDuration = (Math.random() * 3 + 2) + "s";
 
-    ctx.clearRect(0, 0, 300, 300);
+        document.body.appendChild(elem);
 
-    let total = opciones.length;
-    let angulo = (2 * Math.PI) / total;
-
-    for (let i = 0; i < total; i++) {
-        ctx.beginPath();
-        ctx.moveTo(150,150);
-        ctx.arc(150,150,150, i * angulo, (i + 1) * angulo);
-        ctx.fillStyle = i % 2 === 0 ? "#ff6384" : "#36a2eb";
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(150,150);
-        ctx.rotate(i * angulo + angulo/2);
-
-        ctx.fillStyle = "white";
-        ctx.font = "bold 14px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(opciones[i], 80, 5);
-
-        ctx.restore();
+        setTimeout(() => elem.remove(), 5000);
     }
 }
 
-function girar() {
-    if (opciones.length === 0) {
-        alert("Ingresa nombres");
-        return;
-    }
-
-    let total = opciones.length;
-    let anguloPorOpcion = 360 / total;
-
-    // Elegir ganador primero (clave)
-    let ganadorIndex = Math.floor(Math.random() * total);
-
-    // Calcular giro exacto
-    let grados = 360 - (ganadorIndex * anguloPorOpcion) - (anguloPorOpcion / 2);
-
-    // Añadir vueltas extra
-    let giro = grados + (360 * 5);
-
-    anguloActual = giro;
-
-    let canvas = document.getElementById("canvas");
-    canvas.style.transform = `rotate(${anguloActual}deg)`;
-
-    setTimeout(() => {
-        document.getElementById("resultado").innerText =
-            "🎉 Ganador: " + opciones[ganadorIndex];
-    }, 4000);
-}
+/* Se activa al entrar */
+window.onload = () => {
+    setInterval(crearEfecto, 800);
+};
 </script>
 
 </body>
