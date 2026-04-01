@@ -16,7 +16,6 @@ body {
     height: 100vh;
 }
 
-/* CONTENEDOR */
 .calculadora {
     width: 300px;
     background: #222;
@@ -25,14 +24,12 @@ body {
     box-shadow: 0 0 20px black;
 }
 
-/* TITULO */
 h1 {
     color: white;
     text-align: center;
     font-size: 18px;
 }
 
-/* PANTALLA */
 .pantalla {
     width: 100%;
     height: 60px;
@@ -45,7 +42,6 @@ h1 {
     margin-bottom: 15px;
 }
 
-/* BOTONES */
 .botones {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -71,7 +67,7 @@ button {
 <body>
 
 <div class="calculadora">
-    <h1>CALCULADORA DE LUIS XD 😈</h1>
+    <h1>CALCULADORA DE LUIS XD</h1>
 
     <input type="text" id="pantalla" class="pantalla" disabled>
 
@@ -115,28 +111,24 @@ function borrar() {
     pantalla.value = pantalla.value.slice(0, -1);
 }
 
-/* 😈 CALCULADORA TROLL AJUSTADA */
 function calcular() {
     let pantalla = document.getElementById("pantalla");
 
     try {
         let correcto = eval(pantalla.value);
-
         let probabilidad = Math.random();
 
         let resultado;
 
         if (probabilidad < 0.8) {
-            // 🔢 80% números incorrectos
             let error = Math.floor(Math.random() * 20 - 10);
             resultado = correcto + error;
         } else {
-            // 💀 20% mensajes troll
             let mensajes = [
-                "💀 ESTUDIA MÁS",
-                "🤯 ???",
-                "NO SE 😈",
-                "ERROR 😂",
+                "ESTUDIA MAS",
+                "???",
+                "NO SE",
+                "ERROR",
                 "∞"
             ];
             resultado = mensajes[Math.floor(Math.random() * mensajes.length)];
@@ -144,13 +136,12 @@ function calcular() {
 
         pantalla.value = resultado;
 
-        // 📳 Vibración (si es celular)
         if (navigator.vibrate) {
             navigator.vibrate(100);
         }
 
     } catch {
-        pantalla.value = "💀 ERROR";
+        pantalla.value = "ERROR";
     }
 }
 </script>
