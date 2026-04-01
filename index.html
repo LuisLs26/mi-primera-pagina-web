@@ -3,81 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FELIZ 1 DE ABRIL</title>
+<title>CALCULADORA DE LUIS XD</title>
 
 <style>
 body {
     margin: 0;
-    overflow: hidden;
-    background: linear-gradient(135deg, #ff4e50, #fc913a);
+    font-family: Arial;
+    background: #111;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-/* TEXTO */
+/* CONTENEDOR */
+.calculadora {
+    width: 300px;
+    background: #222;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px black;
+}
+
+/* TITULO */
 h1 {
-    font-size: 50px;
     color: white;
     text-align: center;
-    font-family: cursive;
-    text-shadow: 0 0 20px rgba(255,255,255,0.8);
-    animation: brillo 2s infinite alternate;
+    font-size: 18px;
 }
 
-/* BRILLO */
-@keyframes brillo {
-    from { transform: scale(1); }
-    to { transform: scale(1.1); }
+/* PANTALLA */
+.pantalla {
+    width: 100%;
+    height: 60px;
+    background: black;
+    color: #00ffcc;
+    font-size: 24px;
+    text-align: right;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
 
-/* ELEMENTOS FLOTANTES */
-.particula {
-    position: fixed;
-    font-size: 25px;
-    animation: caer linear forwards;
+/* BOTONES */
+.botones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
 
-@keyframes caer {
-    0% {
-        transform: translateY(-50px);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(100vh);
-        opacity: 0;
-    }
+button {
+    padding: 15px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #444;
+    color: white;
+    cursor: pointer;
 }
+
+.operador { background: #ff9500; }
+.igual { background: #00c853; grid-column: span 2; }
+.clear { background: #ff3b30; }
 </style>
 </head>
 
 <body>
 
-<h1>🎉 FELIZ 1 DE ABRIL 🎉</h1>
+<div class="calculadora">
+    <h1>CALCULADORA DE LUIS XD 😈</h1>
+
+    <input type="text" id="pantalla" class="pantalla" disabled>
+
+    <div class="botones">
+        <button class="clear" onclick="limpiar()">C</button>
+        <button onclick="borrar()">⌫</button>
+        <button class="operador" onclick="agregar('/')">÷</button>
+        <button class="operador" onclick="agregar('*')">×</button>
+
+        <button onclick="agregar('7')">7</button>
+        <button onclick="agregar('8')">8</button>
+        <button onclick="agregar('9')">9</button>
+        <button class="operador" onclick="agregar('-')">−</button>
+
+        <button onclick="agregar('4')">4</button>
+        <button onclick="agregar('5')">5</button>
+        <button onclick="agregar('6')">6</button>
+        <button class="operador" onclick="agregar('+')">+</button>
+
+        <button onclick="agregar('1')">1</button>
+        <button onclick="agregar('2')">2</button>
+        <button onclick="agregar('3')">3</button>
+
+        <button onclick="agregar('0')">0</button>
+        <button onclick="agregar('.')">.</button>
+        <button class="igual" onclick="calcular()">=</button>
+    </div>
+</div>
 
 <script>
-function crearEfecto() {
-    const emojis = ["🎉","🎊","💖","❤️","✨"];
-
-    for (let i = 0; i < 30; i++) {
-        let elem = document.createElement("div");
-        elem.classList.add("particula");
-        elem.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-
-        elem.style.left = Math.random() * window.innerWidth + "px";
-        elem.style.animationDuration = (Math.random() * 3 + 2) + "s";
-
-        document.body.appendChild(elem);
-
-        setTimeout(() => elem.remove(), 5000);
-    }
+function agregar(valor) {
+    document.getElementById("pantalla").value += valor;
 }
 
-/* Se activa al entrar */
-window.onload = () => {
-    setInterval(crearEfecto, 800);
-};
+function limpiar() {
+    document.getElementById("pantalla").value = "";
+}
+
+function borrar() {
+    let pantalla = document.getElementById("pantalla");
+    pantalla.value = pantalla.value.slice(0, -1);
+}
+
+/* 🔥 CALCULADORA TROLL NIVEL DIOS */
+function calcular() {
+    let pantalla = document.getElementById("pantalla");
+
+    try {
+        let correcto = eval(pantalla.value);
+
+        let modos = [
+            correcto + Math.floor(Math.random() * 50 - 25), // error random
+            "💀 ESTUDIA MÁS",
+            "🤯 ???",
+            "ERROR 404 😂",
+            "∞",
+            "NO SE 😈",
+            correcto * Math.random() * 10
+        ];
+
+        let resultado = modos[Math.floor(Math.random() * modos.length)];
+
+        pantalla.value = resultado;
+
+        /* 📳 Vibración (solo móvil) */
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        /* 🔊 Sonido troll */
+        let audio = new Audio("https://www.myinstants.com/media/sounds/troll-laugh.mp3");
+        audio.play();
+
+    } catch {
+        pantalla.value = "💀 ERROR";
+    }
+}
 </script>
 
 </body>
