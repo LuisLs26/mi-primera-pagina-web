@@ -1,149 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CALCULADORA DE LUIS XD</title>
-
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #111;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.calculadora {
-    width: 300px;
-    background: #222;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 20px black;
-}
-
-h1 {
-    color: white;
-    text-align: center;
-    font-size: 18px;
-}
-
-.pantalla {
-    width: 100%;
-    height: 60px;
-    background: black;
-    color: #00ffcc;
-    font-size: 24px;
-    text-align: right;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-}
-
-.botones {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-}
-
-button {
-    padding: 15px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: #444;
-    color: white;
-    cursor: pointer;
-}
-
-.operador { background: #ff9500; }
-.igual { background: #00c853; grid-column: span 2; }
-.clear { background: #ff3b30; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario Bros Funcional</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #87CEEB; }
+        canvas { display: block; background: #87CEEB; margin: 0 auto; }
+    </style>
 </head>
-
 <body>
 
-<div class="calculadora">
-    <h1>CALCULADORA DE LUIS XD</h1>
-
-    <input type="text" id="pantalla" class="pantalla" disabled>
-
-    <div class="botones">
-        <button class="clear" onclick="limpiar()">C</button>
-        <button onclick="borrar()">⌫</button>
-        <button class="operador" onclick="agregar('/')">÷</button>
-        <button class="operador" onclick="agregar('*')">×</button>
-
-        <button onclick="agregar('7')">7</button>
-        <button onclick="agregar('8')">8</button>
-        <button onclick="agregar('9')">9</button>
-        <button class="operador" onclick="agregar('-')">−</button>
-
-        <button onclick="agregar('4')">4</button>
-        <button onclick="agregar('5')">5</button>
-        <button onclick="agregar('6')">6</button>
-        <button class="operador" onclick="agregar('+')">+</button>
-
-        <button onclick="agregar('1')">1</button>
-        <button onclick="agregar('2')">2</button>
-        <button onclick="agregar('3')">3</button>
-
-        <button onclick="agregar('0')">0</button>
-        <button onclick="agregar('.')">.</button>
-        <button class="igual" onclick="calcular()">=</button>
-    </div>
-</div>
+<canvas id="gameCanvas"></canvas>
 
 <script>
-function agregar(valor) {
-    document.getElementById("pantalla").value += valor;
-}
+// Setup del Canvas
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function limpiar() {
-    document.getElementById("pantalla").value = "";
-}
+// Configuración inicial
+let mario = { x: 50, y: canvas.height - 150, width: 50, height: 70, speed: 5, dx: 0, dy: 0, gravity: 0.8, jumpPower: -15, jumping: false };
+let floorHeight = 50;
+let keys = { left: false, right: false, up: false };
 
-function borrar() {
-    let pantalla = document.getElementById("pantalla");
-    pantalla.value = pantalla.value.slice(0, -1);
-}
+// Fondo
+let backgroundColor = "#87CEEB"; // Color cielo
 
-function calcular() {
-    let pantalla = document.getElementById("pantalla");
+// Movimiento y gravedad de Mario
+function moveMario() {
+    if (keys.left && mario.x > 0) {
+        mario.dx = -mario.speed;
+    } else if (keys.right && mario.x < canvas.width - mario.width) {
+        mario.dx = mario.speed;
+    } else {
+        mario.dx = 0;
+    }
 
-    try {
-        let correcto = eval(pantalla.value);
-        let probabilidad = Math.random();
+    if (keys.up && !mario.jumping) {
+        mario.dy = mario.jumpPower;
+        mario.jumping = true;
+    }
 
-        let resultado;
+    mario.x += mario.dx;
+    mario.y += mario.dy;
 
-        if (probabilidad < 0.8) {
-            let error = Math.floor(Math.random() * 20 - 10);
-            resultado = correcto + error;
-        } else {
-            let mensajes = [
-                "ESTUDIA MAS",
-                "???",
-                "NO SE",
-                "ERROR",
-                "∞"
-            ];
-            resultado = mensajes[Math.floor(Math.random() * mensajes.length)];
-        }
-
-        pantalla.value = resultado;
-
-        if (navigator.vibrate) {
-            navigator.vibrate(100);
-        }
-
-    } catch {
-        pantalla.value = "ERROR";
+    if (mario.y + mario.height > canvas.height - floorHeight) {
+        mario.y = canvas.height - mario.height - floorHeight;
+        mario.dy = 0;
+        mario.jumping = false;
+    } else {
+        mario.dy += mario.gravity; // Aplicamos gravedad
     }
 }
+
+// Dibujar Mario
+function drawMario() {
+    ctx.fillStyle = "red";
+    ctx.fillRect(mario.x, mario.y, mario.width, mario.height);
+}
+
+// Función para dibujar el suelo
+function drawFloor() {
+    ctx.fillStyle = "green";
+    ctx.fillRect(0, canvas.height - floorHeight, canvas.width, floorHeight);
+}
+
+// Control de teclas
+function keyDown(e) {
+    if (e.key == "ArrowLeft" || e.key == "a") {
+        keys.left = true;
+    }
+    if (e.key == "ArrowRight" || e.key == "d") {
+        keys.right = true;
+    }
+    if (e.key == "ArrowUp" || e.key == "w") {
+        keys.up = true;
+    }
+}
+
+function keyUp(e) {
+    if (e.key == "ArrowLeft" || e.key == "a") {
+        keys.left = false;
+    }
+    if (e.key == "ArrowRight" || e.key == "d") {
+        keys.right = false;
+    }
+    if (e.key == "ArrowUp" || e.key == "w") {
+        keys.up = false;
+    }
+}
+
+// Función principal de actualización del juego
+function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar canvas
+    moveMario();
+    drawFloor();
+    drawMario();
+    requestAnimationFrame(update); // Llamar a la siguiente actualización
+}
+
+// Event listeners
+window.addEventListener('keydown', keyDown);
+window.addEventListener('keyup', keyUp);
+
+// Empezar juego
+update();
 </script>
 
 </body>
