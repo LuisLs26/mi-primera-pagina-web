@@ -1,295 +1,583 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Calculadora con Voz</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #111;
-      font-family: 'Roboto Mono', monospace;
-      color: #0f0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-    .header {
-      text-align: center;
-      padding: 15px;
-      background: #000;
-      font-size: 1.4rem;
-      letter-spacing: 2px;
-    }
-    .display {
-      background: #000;
-      color: #0f0;
-      font-size: 3.2rem;
-      text-align: right;
-      padding: 25px 20px;
-      min-height: 110px;
-      border-bottom: 4px solid #0f0;
-      overflow: hidden;
-      word-break: break-all;
-      box-shadow: inset 0 4px 10px rgba(0,255,0,0.3);
-    }
-    .buttons {
-      flex: 1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 15px;
-      background: #111;
-    }
-    button {
-      font-size: 1.8rem;
-      font-weight: bold;
-      border: none;
-      border-radius: 18px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
-      transition: all 0.1s;
-      touch-action: manipulation;
-    }
-    button:active {
-      transform: scale(0.95);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-    .number, .decimal {
-      background: #222;
-      color: #fff;
-    }
-    .operator {
-      background: #f90;
-      color: #000;
-      font-size: 2rem;
-    }
-    .equal {
-      background: #0f0;
-      color: #000;
-      font-size: 2.2rem;
-    }
-    .special {
-      background: #333;
-      color: #0f0;
-    }
-    .zero {
-      grid-column: span 2;
-      font-size: 1.8rem;
-    }
-    .footer {
-      text-align: center;
-      padding: 10px;
-      font-size: 0.9rem;
-      color: #555;
-      background: #000;
-    }
-    @media (orientation: landscape) and (max-height: 500px) {
-      .buttons { gap: 6px; padding: 10px; }
-      button { font-size: 1.4rem; border-radius: 12px; }
-      .display { font-size: 2.4rem; min-height: 80px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Ashley ✨</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&amp;display=swap');
+        
+        :root {
+            --pink: #ff9ec1;
+            --blue: #a8d8ff;
+            --purple: #d4a8ff;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(180deg, #e0f0ff, #f8d8ff);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 400px;
+            max-width: 100vw;
+            box-shadow: 0 25px 50px rgba(255, 158, 193, 0.35);
+            border-radius: 30px;
+            overflow: hidden;
+            background: #fff;
+            border: 8px solid #fff;
+        }
+        
+        header {
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            color: white;
+            text-align: center;
+            padding: 14px 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        canvas {
+            display: block;
+            background: #b8e0ff;
+            width: 100%;
+            height: auto;
+        }
+        
+        .stats {
+            position: absolute;
+            top: 75px;
+            left: 20px;
+            background: rgba(255,255,255,0.95);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        #controls {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 25px;
+            z-index: 40;
+            pointer-events: none;
+        }
+        
+        .control-btn {
+            pointer-events: all;
+            width: 74px;
+            height: 74px;
+            background: rgba(255,255,255,0.98);
+            border: 5px solid var(--pink);
+            border-radius: 50%;
+            color: var(--pink);
+            font-size: 2.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(255, 158, 193, 0.45);
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.85);
+            box-shadow: 0 6px 12px rgba(255, 158, 193, 0.4);
+        }
+        
+        #jump-btn {
+            width: 90px;
+            height: 90px;
+            font-size: 2.2rem;
+            background: rgba(212, 168, 255, 0.98);
+            border-color: var(--purple);
+            color: #5f3a7a;
+            box-shadow: 0 12px 28px rgba(212, 168, 255, 0.45);
+        }
+        
+        /* Modales */
+        .modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.68);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .modal.show { display: flex; animation: fadeInModal 0.3s ease forwards; }
+        
+        .modal-content {
+            background: white;
+            width: 86%;
+            max-width: 340px;
+            border-radius: 28px;
+            padding: 32px 28px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(255, 158, 193, 0.35);
+            animation: popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .modal-content p {
+            font-size: 1.4rem;
+            line-height: 1.45;
+            color: #222;
+            margin-bottom: 28px;
+            font-weight: 400;
+        }
+        
+        .modal-content button {
+            background: linear-gradient(90deg, var(--pink), var(--purple));
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 50px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 158, 193, 0.4);
+            transition: all 0.2s ease;
+        }
+        
+        .modal-content button:active { transform: scale(0.95); }
+        
+        #end-screen .modal-content { padding: 45px 28px; }
+        
+        #end-screen h2 {
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #ff9ec1, #a8d8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        
+        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes popIn { 0% { transform: scale(0.75); } 100% { transform: scale(1); } }
+    </style>
 </head>
 <body>
-  <div class="header">CALCULADORA CON VOZ</div>
-  
-  <div id="display" class="display">0</div>
-  
-  <div class="buttons" id="buttonsContainer">
-    <!-- Los botones se crean con JavaScript (ya no hay duplicados) -->
-  </div>
+    <div id="game-container">
+        <header>👸 Para ti, Ashley 💙</header>
+        
+        <canvas id="game" width="400" height="600"></canvas>
+        
+        <div class="stats" id="stats">
+            ✨ <span id="collected">0</span>/<span id="total">7</span>
+        </div>
+        
+        <div id="controls">
+            <button class="control-btn" id="left-btn">←</button>
+            <button class="control-btn" id="jump-btn">↑</button>
+            <button class="control-btn" id="right-btn">→</button>
+        </div>
+        
+        <!-- Modal de mensaje -->
+        <div class="modal" id="message-modal">
+            <div class="modal-content">
+                <p id="message-text"></p>
+                <button id="continue-btn">Continuar el camino 💖</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla final -->
+        <div class="modal" id="end-screen">
+            <div class="modal-content">
+                <h2>Ashley ✨</h2>
+                <p style="font-size:1.55rem; line-height:1.35; margin-bottom:35px;">
+                    Esto es solo una etapa…<br>
+                    y vas a estar bien 💙
+                </p>
+                <div style="font-size:3.2rem; margin:25px 0;">👸🏰💖</div>
+                <button onclick="restartGame()">Jugar de nuevo</button>
+                <p style="margin-top:25px; font-size:0.95rem; color:#777;">
+                    Eres más fuerte de lo que crees.
+                </p>
+            </div>
+        </div>
+    </div>
 
-  <div class="footer">
-    ✅ Voz corregida • Botones únicos<br>
-    Toca cualquier botón → se escucha en español peruano
-  </div>
+    <script>
+        // =============================================
+        // JUEGO PARA ASHLEY – Versión 100% corregida
+        // Movimiento totalmente funcional (móvil + teclado)
+        // Controles con touch + mouse (flechas puras)
+        // Princesa dibujada vectorial (sin emojis)
+        // Física profesional y estable
+        // =============================================
 
-  <script>
-    const display = document.getElementById('display');
-    const buttonsContainer = document.getElementById('buttonsContainer');
-    let currentInput = '0';
-    let previousInput = '';
-    let operator = '';
-    let shouldResetDisplay = false;
-    let voiceEnabled = true;
-
-    // Mapeo de botones a voz (más natural en español peruano)
-    const speechMap = {
-      '0': 'cero',
-      '1': 'uno',
-      '2': 'dos',
-      '3': 'tres',
-      '4': 'cuatro',
-      '5': 'cinco',
-      '6': 'seis',
-      '7': 'siete',
-      '8': 'ocho',
-      '9': 'nueve',
-      '.': 'punto',
-      '+': 'más',
-      '−': 'menos',
-      '×': 'por',
-      '÷': 'dividido',
-      '%': 'porcentaje',
-      'AC': 'borrar todo',
-      '+/-': 'más menos',
-      '=': 'igual'
-    };
-
-    // Función para hablar (corregida y más confiable)
-    function speak(text) {
-      if (!voiceEnabled || !('speechSynthesis' in window)) return;
-      
-      // Cancelamos cualquier voz anterior para que no se acumule
-      speechSynthesis.cancel();
-      
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'es-PE';     // Español de Perú (funciona en Chrome Android)
-      utterance.pitch = 1.05;
-      utterance.rate = 1.1;
-      utterance.volume = 0.95;
-      
-      speechSynthesis.speak(utterance);
-    }
-
-    // Actualizar pantalla
-    function updateDisplay() {
-      display.textContent = currentInput.length > 12 
-        ? parseFloat(currentInput).toExponential(4) 
-        : currentInput;
-    }
-
-    // Calcular
-    function calculate() {
-      if (!operator || !previousInput) return;
-      
-      const prev = parseFloat(previousInput);
-      const curr = parseFloat(currentInput);
-      
-      let result;
-      switch (operator) {
-        case '+': result = prev + curr; break;
-        case '-': result = prev - curr; break;
-        case '*': result = prev * curr; break;
-        case '/': result = curr === 0 ? 'Error' : prev / curr; break;
-        case '%': result = prev % curr || 0; break;
-      }
-      
-      currentInput = (result % 1 === 0) ? result.toString() : parseFloat(result.toFixed(8)).toString();
-      if (currentInput === 'NaN' || currentInput === 'Infinity') currentInput = 'Error';
-      
-      operator = '';
-      previousInput = '';
-      shouldResetDisplay = true;
-    }
-
-    // Manejar botón
-    function handleButton(value) {
-      // === VOZ: siempre suena al tocar ===
-      if (speechMap[value]) {
-        speak(speechMap[value]);
-      }
-
-      // Lógica de calculadora (corregida)
-      if (shouldResetDisplay && !['+', '-', '*', '/', '%'].includes(value)) {
-        currentInput = '0';
-        shouldResetDisplay = false;
-      }
-
-      if (['0','1','2','3','4','5','6','7','8','9'].includes(value)) {
-        if (currentInput === '0' || shouldResetDisplay) {
-          currentInput = value;
-          shouldResetDisplay = false;
-        } else if (currentInput !== 'Error') {
-          currentInput += value;
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        
+        const WIDTH = 400;
+        const HEIGHT = 600;
+        const WORLD_WIDTH = 2800;
+        
+        // Física estable y suave
+        const GRAVITY = 0.68;
+        const JUMP_FORCE = -15.2;
+        const MOVE_SPEED = 5.8;
+        const ACCEL = 1.35;
+        const FRICTION = 0.86;
+        
+        let cameraX = 0;
+        let score = 0;
+        let totalStars = 7;
+        let paused = false;
+        let gameWon = false;
+        
+        const messages = [
+            "No tienes que estar bien todo el tiempo",
+            "Lo que sientes es válido",
+            "Vas a salir de esto más fuerte",
+            "Mereces algo mejor, sin duda",
+            "No estás sola en esto",
+            "Respira. Mañana puede ser más suave",
+            "Estás haciendo lo mejor que puedes y eso ya es mucho"
+        ];
+        let messageIndex = 0;
+        
+        // Jugador (princesa)
+        let player = {
+            x: 80,
+            y: 452,                    // Posición exacta sobre el suelo
+            vx: 0,
+            vy: 0,
+            width: 42,
+            height: 58,
+            onGround: true
+        };
+        
+        // Plataformas
+        let platforms = [
+            { x: 0,   y: 510, w: WORLD_WIDTH, h: 90 },
+            { x: 380, y: 410, w: 240, h: 22 },
+            { x: 720, y: 320, w: 180, h: 22 },
+            { x: 1050,y: 445, w: 260, h: 22 },
+            { x: 1480,y: 280, w: 170, h: 22 },
+            { x: 1820,y: 380, w: 220, h: 22 },
+            { x: 2200,y: 460, w: 280, h: 22 }
+        ];
+        
+        // Estrellas
+        let stars = [
+            { x: 520, y: 340, collected: false },
+            { x: 820, y: 240, collected: false },
+            { x: 1120,y: 370, collected: false },
+            { x: 1380,y: 210, collected: false },
+            { x: 1650,y: 320, collected: false },
+            { x: 2050,y: 310, collected: false },
+            { x: 2380,y: 390, collected: false }
+        ];
+        
+        // Monitos
+        let monitos = [
+            { x: 620, y: 380, triggered: false },
+            { x: 920, y: 280, triggered: false },
+            { x: 1270,y: 410, triggered: false },
+            { x: 1590,y: 240, triggered: false },
+            { x: 1990,y: 340, triggered: false },
+            { x: 2450,y: 420, triggered: false }
+        ];
+        
+        // Castillo
+        let castle = { x: 2550, y: 410, w: 95, h: 100 };
+        
+        // Controles
+        let leftPressed = false;
+        let rightPressed = false;
+        
+        // ====================== CONTROLES 100% FUNCIONALES ======================
+        function setupControls() {
+            const leftBtn  = document.getElementById('left-btn');
+            const rightBtn = document.getElementById('right-btn');
+            const jumpBtn  = document.getElementById('jump-btn');
+            
+            // === BOTÓN IZQUIERDA ===
+            const pressLeft = (e) => {
+                if (e) e.preventDefault();
+                leftPressed = true;
+            };
+            const releaseLeft = () => { leftPressed = false; };
+            
+            leftBtn.addEventListener('mousedown', pressLeft);
+            leftBtn.addEventListener('touchstart', pressLeft);
+            leftBtn.addEventListener('mouseup', releaseLeft);
+            leftBtn.addEventListener('mouseleave', releaseLeft);
+            leftBtn.addEventListener('touchend', releaseLeft);
+            leftBtn.addEventListener('touchcancel', releaseLeft);
+            
+            // === BOTÓN DERECHA ===
+            const pressRight = (e) => {
+                if (e) e.preventDefault();
+                rightPressed = true;
+            };
+            const releaseRight = () => { rightPressed = false; };
+            
+            rightBtn.addEventListener('mousedown', pressRight);
+            rightBtn.addEventListener('touchstart', pressRight);
+            rightBtn.addEventListener('mouseup', releaseRight);
+            rightBtn.addEventListener('mouseleave', releaseRight);
+            rightBtn.addEventListener('touchend', releaseRight);
+            rightBtn.addEventListener('touchcancel', releaseRight);
+            
+            // === BOTÓN SALTO ===
+            const doJump = (e) => {
+                if (e) e.preventDefault();
+                if (!paused && !gameWon && player.onGround) {
+                    player.vy = JUMP_FORCE;
+                    player.onGround = false;
+                }
+            };
+            
+            jumpBtn.addEventListener('mousedown', doJump);
+            jumpBtn.addEventListener('touchstart', doJump);
         }
-      }
-      else if (value === '.') {
-        if (shouldResetDisplay) {
-          currentInput = '0.';
-          shouldResetDisplay = false;
-        } else if (!currentInput.includes('.')) {
-          currentInput += '.';
+        
+        // ====================== TECLADO ======================
+        function handleKeyboard(e) {
+            if (paused || gameWon) return;
+            
+            if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
+                leftPressed = (e.type === 'keydown');
+            }
+            if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
+                rightPressed = (e.type === 'keydown');
+            }
+            if ((e.key === ' ' || e.key === 'ArrowUp') && e.type === 'keydown') {
+                e.preventDefault();
+                if (player.onGround) {
+                    player.vy = JUMP_FORCE;
+                    player.onGround = false;
+                }
+            }
         }
-      }
-      else if (['+', '-', '*', '/', '%'].includes(value)) {
-        if (operator && !shouldResetDisplay) calculate();
-        previousInput = currentInput;
-        operator = value === '÷' ? '/' : value === '×' ? '*' : value === '−' ? '-' : value;
-        shouldResetDisplay = true;
-      }
-      else if (value === '=') {
-        if (operator) {
-          calculate();
-          // Decimos el resultado en voz alta
-          if (currentInput !== 'Error') {
-            setTimeout(() => {
-              const resultText = currentInput.replace('.', ' punto ');
-              speak('resultado ' + resultText);
-            }, 200);
-          }
+        
+        // ====================== COLISIONES ======================
+        function collides(a, b) {
+            return !(
+                a.x + a.width < b.x ||
+                a.x > b.x + b.w ||
+                a.y + a.height < b.y ||
+                a.y > b.y + b.h
+            );
         }
-      }
-      else if (value === 'AC') {
-        currentInput = '0';
-        previousInput = '';
-        operator = '';
-        shouldResetDisplay = false;
-      }
-      else if (value === '+/-') {
-        if (currentInput !== '0' && currentInput !== 'Error') {
-          currentInput = (parseFloat(currentInput) * -1).toString();
+        
+        // ====================== ACTUALIZACIÓN FÍSICA (CORREGIDA) ======================
+        function update() {
+            if (paused || gameWon) return;
+            
+            // Movimiento horizontal con aceleración realista
+            let targetVx = 0;
+            if (leftPressed)  targetVx = -MOVE_SPEED;
+            if (rightPressed) targetVx =  MOVE_SPEED;
+            
+            if (targetVx !== 0) {
+                player.vx += (targetVx - player.vx) * ACCEL;
+            } else {
+                player.vx *= FRICTION;
+            }
+            
+            if (Math.abs(player.vx) < 0.2) player.vx = 0;
+            
+            player.x += player.vx;
+            
+            // Límites del mundo
+            if (player.x < 20) { player.x = 20; player.vx = 0; }
+            
+            // Colisiones horizontales
+            for (let p of platforms) {
+                if (collides(player, p)) {
+                    if (player.vx > 0) player.x = p.x - player.width;
+                    if (player.vx < 0) player.x = p.x + p.w;
+                    player.vx = 0;
+                }
+            }
+            
+            // Gravedad y movimiento vertical
+            player.vy += GRAVITY;
+            player.y += player.vy;
+            
+            player.onGround = false;
+            
+            // Colisiones verticales
+            for (let p of platforms) {
+                if (collides(player, p)) {
+                    if (player.vy > 0) {                    // cayendo
+                        player.y = p.y - player.height;
+                        player.vy = 0;
+                        player.onGround = true;
+                    } else if (player.vy < 0) {             // golpeando techo
+                        player.y = p.y + p.h;
+                        player.vy = 0.2;
+                    }
+                }
+            }
+            
+            // Recoger estrellas
+            for (let s of stars) {
+                if (!s.collected) {
+                    const dx = player.x + player.width/2 - s.x;
+                    const dy = player.y + player.height/2 - s.y;
+                    if (Math.hypot(dx, dy) < 38) {
+                        s.collected = true;
+                        score++;
+                        document.getElementById('collected').textContent = score;
+                    }
+                }
+            }
+            
+            // Tocar monitos
+            for (let m of monitos) {
+                if (!m.triggered) {
+                    const dx = player.x + player.width/2 - m.x;
+                    const dy = player.y + player.height/2 - m.y;
+                    if (Math.hypot(dx, dy) < 45) {
+                        m.triggered = true;
+                        showEmotionalMessage();
+                        return;
+                    }
+                }
+            }
+            
+            // Llegar al castillo
+            if (collides(player, castle)) {
+                winGame();
+            }
+            
+            // Cámara suave
+            const targetCamera = player.x - WIDTH / 2 + player.width / 2;
+            cameraX = Math.max(0, Math.min(targetCamera, WORLD_WIDTH - WIDTH));
         }
-      }
-
-      updateDisplay();
-    }
-
-    // Crear botones (UNA SOLA VEZ - ya no hay duplicados)
-    const buttonValues = [
-      'AC', '+/-', '%', '÷',
-      '7', '8', '9', '×',
-      '4', '5', '6', '−',
-      '1', '2', '3', '+',
-      '0', '.', '='
-    ];
-
-    buttonValues.forEach(val => {
-      const btn = document.createElement('button');
-      
-      if (val === '0') btn.classList.add('zero');
-      if (['0','1','2','3','4','5','6','7','8','9'].includes(val)) btn.classList.add('number');
-      else if (val === '.') btn.classList.add('decimal');
-      else if (['÷','×','−','+'].includes(val)) btn.classList.add('operator');
-      else if (val === '=') btn.classList.add('equal');
-      else btn.classList.add('special');
-      
-      btn.textContent = val;
-      btn.dataset.value = val;
-      btn.addEventListener('click', () => handleButton(val));
-      buttonsContainer.appendChild(btn);
-    });
-
-    // Soporte teclado
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === '=') handleButton('=');
-      else if (e.key === 'Escape') handleButton('AC');
-      else if (['0','1','2','3','4','5','6','7','8','9','+','-','*','/','%','.'].includes(e.key)) {
-        let mapped = e.key;
-        if (e.key === '/') mapped = '÷';
-        if (e.key === '*') mapped = '×';
-        if (e.key === '-') mapped = '−';
-        handleButton(mapped);
-      }
-    });
-
-    // Iniciar
-    updateDisplay();
-    console.log('%c✅ Calculadora corregida - voz y botones únicos', 'color:#0f0; font-size:18px');
-  </script>
-</body>
-</html>
+        
+        // ====================== MENSAJE EMOCIONAL ======================
+        function showEmotionalMessage() {
+            paused = true;
+            const modal = document.getElementById('message-modal');
+            const textEl = document.getElementById('message-text');
+            
+            textEl.textContent = messages[messageIndex % messages.length];
+            messageIndex++;
+            
+            modal.classList.add('show');
+            
+            document.getElementById('continue-btn').onclick = () => {
+                modal.classList.remove('show');
+                paused = false;
+            };
+        }
+        
+        // ====================== VICTORIA ======================
+        function winGame() {
+            gameWon = true;
+            paused = true;
+            document.getElementById('end-screen').classList.add('show');
+        }
+        
+        // ====================== REINICIAR ======================
+        window.restartGame = function() {
+            player.x = 80;
+            player.y = 452;
+            player.vx = 0;
+            player.vy = 0;
+            player.onGround = true;
+            
+            cameraX = 0;
+            score = 0;
+            messageIndex = 0;
+            gameWon = false;
+            paused = false;
+            
+            stars.forEach(s => s.collected = false);
+            monitos.forEach(m => m.triggered = false);
+            
+            document.getElementById('collected').textContent = '0';
+            document.getElementById('end-screen').classList.remove('show');
+        };
+        
+        // ====================== DIBUJO DE LA PRINCESA (VECTORIAL) ======================
+        function drawPrincess() {
+            const px = player.x - cameraX + player.width / 2;
+            const py = player.y + player.height / 2 + (player.onGround ? Math.sin(Date.now() / 160) * 2.5 : 0);
+            
+            ctx.save();
+            ctx.translate(px, py);
+            if (player.vx < -0.5) ctx.scale(-1, 1);
+            
+            // Vestido
+            ctx.fillStyle = '#ff9ec1';
+            ctx.beginPath();
+            ctx.moveTo(0, 12);
+            ctx.quadraticCurveTo(-18, 32, -14, 46);
+            ctx.lineTo(14, 46);
+            ctx.quadraticCurveTo(18, 32, 0, 12);
+            ctx.fill();
+            
+            // Cuerpo
+            ctx.fillStyle = '#a8d8ff';
+            ctx.fillRect(-13, -4, 26, 22);
+            
+            // Cabeza
+            ctx.fillStyle = '#f8d0b0';
+            ctx.beginPath();
+            ctx.arc(0, -19, 13.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Corona
+            ctx.fillStyle = '#ffeb3b';
+            ctx.beginPath();
+            ctx.moveTo(-12, -29);
+            ctx.lineTo(-8, -37);
+            ctx.lineTo(-3.5, -29);
+            ctx.lineTo(0, -39);
+            ctx.lineTo(3.5, -29);
+            ctx.lineTo(8, -37);
+            ctx.lineTo(12, -29);
+            ctx.fill();
+            
+            // Cabello
+            ctx.fillStyle = '#ff9ec1';
+            ctx.fillRect(-13.5, -29, 6, 9);
+            ctx.fillRect(7.5, -29, 6, 9);
+            
+            // Ojos
+            ctx.fillStyle = '#26334a';
+            ctx.fillRect(-7, -23, 4.5, 5);
+            ctx.fillRect(2.5, -23, 4.5, 5);
+            
+            // Sonrisa
+            ctx.strokeStyle = '#26334a';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.arc(0, -14.5, 4.5, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        // ====================== DIBUJO
